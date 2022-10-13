@@ -13,7 +13,7 @@ import (
 // endpoint for a role. You can choose whether
 // or not certain attributes should be displayed,
 // required, and named.
-func pathCredentials(b *hashiCupsBackend) *framework.Path {
+func pathCredentials(b *myBackend) *framework.Path {
 	return &framework.Path{
 		Pattern: "creds/" + framework.GenericNameRegex("name"),
 		Fields: map[string]*framework.FieldSchema{
@@ -34,7 +34,7 @@ func pathCredentials(b *hashiCupsBackend) *framework.Path {
 
 // pathCredentialsRead creates a new HashiCups token each time it is called if a
 // role exists.
-func (b *hashiCupsBackend) pathCredentialsRead(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+func (b *myBackend) pathCredentialsRead(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	roleName := d.Get("name").(string)
 
 	roleEntry, err := b.getRole(ctx, req.Storage, roleName)
@@ -51,7 +51,7 @@ func (b *hashiCupsBackend) pathCredentialsRead(ctx context.Context, req *logical
 
 // createUserCreds creates a new HashiCups token to store into the Vault backend, generates
 // a response with the secrets information, and checks the TTL and MaxTTL attributes.
-func (b *hashiCupsBackend) createUserCreds(ctx context.Context, req *logical.Request, role *hashiCupsRoleEntry) (*logical.Response, error) {
+func (b *myBackend) createUserCreds(ctx context.Context, req *logical.Request, role *hashiCupsRoleEntry) (*logical.Response, error) {
 	token, err := b.createToken(ctx, req.Storage, role)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (b *hashiCupsBackend) createUserCreds(ctx context.Context, req *logical.Req
 }
 
 // createToken uses the HashiCups client to sign in and get a new token
-func (b *hashiCupsBackend) createToken(ctx context.Context, s logical.Storage, roleEntry *hashiCupsRoleEntry) (*hashiCupsToken, error) {
+func (b *myBackend) createToken(ctx context.Context, s logical.Storage, roleEntry *hashiCupsRoleEntry) (*hashiCupsToken, error) {
 	client, err := b.getClient(ctx, s)
 	if err != nil {
 		return nil, err

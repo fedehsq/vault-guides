@@ -24,7 +24,7 @@ type hashiCupsToken struct {
 
 // hashiCupsToken defines a secret to store for a given role
 // and how it should be revoked or renewed.
-func (b *hashiCupsBackend) hashiCupsToken() *framework.Secret {
+func (b *myBackend) hashiCupsToken() *framework.Secret {
 	return &framework.Secret{
 		Type: hashiCupsTokenType,
 		Fields: map[string]*framework.FieldSchema{
@@ -39,7 +39,7 @@ func (b *hashiCupsBackend) hashiCupsToken() *framework.Secret {
 }
 
 // tokenRevoke removes the token from the Vault storage API and calls the client to revoke the token
-func (b *hashiCupsBackend) tokenRevoke(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+func (b *myBackend) tokenRevoke(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	client, err := b.getClient(ctx, req.Storage)
 	if err != nil {
 		return nil, fmt.Errorf("error getting client: %w", err)
@@ -65,7 +65,7 @@ func (b *hashiCupsBackend) tokenRevoke(ctx context.Context, req *logical.Request
 }
 
 // tokenRenew calls the client to create a new token and stores it in the Vault storage API
-func (b *hashiCupsBackend) tokenRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+func (b *myBackend) tokenRenew(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	roleRaw, ok := req.Secret.InternalData["role"]
 	if !ok {
 		return nil, fmt.Errorf("secret is missing role internal data")

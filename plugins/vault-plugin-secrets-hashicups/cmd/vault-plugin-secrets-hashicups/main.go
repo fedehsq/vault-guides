@@ -4,11 +4,13 @@ import (
 	"os"
 
 	"github.com/hashicorp/go-hclog"
-	hashicups "github.com/hashicorp/vault-guides/plugins/vault-plugin-secrets-hashicups"
+	myBackend "github.com/hashicorp/vault-guides/plugins/vault-plugin-secrets-hashicups"
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/plugin"
 )
 
+// Use the Vault SDK's plugin library to start the plugin
+// and communicate with the Vault API.
 func main() {
 	apiClientMeta := &api.PluginAPIClientMeta{}
 	flags := apiClientMeta.FlagSet()
@@ -18,7 +20,7 @@ func main() {
 	tlsProviderFunc := api.VaultPluginTLSProvider(tlsConfig)
 
 	err := plugin.Serve(&plugin.ServeOpts{
-		BackendFactoryFunc: hashicups.Factory,
+		BackendFactoryFunc: myBackend.Factory,
 		TLSProviderFunc:    tlsProviderFunc,
 	})
 	if err != nil {

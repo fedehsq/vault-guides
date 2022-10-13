@@ -27,7 +27,7 @@ type hashiCupsConfig struct {
 // required, and named. For example, password
 // is marked as sensitive and will not be output
 // when you read the configuration.
-func pathConfig(b *hashiCupsBackend) *framework.Path {
+func pathConfig(b *myBackend) *framework.Path {
 	return &framework.Path{
 		Pattern: "config",
 		Fields: map[string]*framework.FieldSchema{
@@ -80,7 +80,7 @@ func pathConfig(b *hashiCupsBackend) *framework.Path {
 }
 
 // pathConfigExistenceCheck verifies if the configuration exists.
-func (b *hashiCupsBackend) pathConfigExistenceCheck(ctx context.Context, req *logical.Request, data *framework.FieldData) (bool, error) {
+func (b *myBackend) pathConfigExistenceCheck(ctx context.Context, req *logical.Request, data *framework.FieldData) (bool, error) {
 	out, err := req.Storage.Get(ctx, req.Path)
 	if err != nil {
 		return false, fmt.Errorf("existence check failed: %w", err)
@@ -90,7 +90,7 @@ func (b *hashiCupsBackend) pathConfigExistenceCheck(ctx context.Context, req *lo
 }
 
 // pathConfigRead reads the configuration and outputs non-sensitive information.
-func (b *hashiCupsBackend) pathConfigRead(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+func (b *myBackend) pathConfigRead(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
 	config, err := getConfig(ctx, req.Storage)
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func (b *hashiCupsBackend) pathConfigRead(ctx context.Context, req *logical.Requ
 }
 
 // pathConfigWrite updates the configuration for the backend
-func (b *hashiCupsBackend) pathConfigWrite(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+func (b *myBackend) pathConfigWrite(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
 	config, err := getConfig(ctx, req.Storage)
 	if err != nil {
 		return nil, err
@@ -154,7 +154,7 @@ func (b *hashiCupsBackend) pathConfigWrite(ctx context.Context, req *logical.Req
 }
 
 // pathConfigDelete removes the configuration for the backend
-func (b *hashiCupsBackend) pathConfigDelete(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+func (b *myBackend) pathConfigDelete(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
 	err := req.Storage.Delete(ctx, configStoragePath)
 
 	if err == nil {

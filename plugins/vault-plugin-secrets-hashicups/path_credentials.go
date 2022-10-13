@@ -9,7 +9,7 @@ import (
 // endpoint for a role. You can choose whether
 // or not certain attributes should be displayed,
 // required, and named.
-func pathCredentials(b *hashiCupsBackend) *framework.Path {
+func pathCredentials(b *myBackend) *framework.Path {
 	return &framework.Path{
 		Pattern:         "creds/" + framework.GenericNameRegex("name"),
 		Fields:          map[string]*framework.FieldSchema{},
