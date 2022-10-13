@@ -12,27 +12,30 @@ import (
 
 // Factory returns a new backend as logical.Backend
 func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
-	b := backend()
+	b := createMyBackend()
 	if err := b.Setup(ctx, conf); err != nil {
 		return nil, err
 	}
 	return b, nil
 }
 
-// hashiCupsBackend defines an object that
+// myBacked defines an object that
 // extends the Vault backend and stores the
 // target API's client.
-type hashiCupsBackend struct {
+type myBackend struct {
+	// implements logical.Backend
 	*framework.Backend
+	// locking mechanisms for writing or changing secrets engine data
 	lock   sync.RWMutex
+	// stores the client for the target API, HashiCups
 	client *hashiCupsClient
 }
 
 // backend defines the target API backend
 // for Vault. It must include each path
 // and the secrets it will store.
-func backend() *hashiCupsBackend {
-	var b = hashiCupsBackend{}
+func createMyBackend() *myBackend {
+	b := myBackend{}
 
 	b.Backend = &framework.Backend{
 		Help: strings.TrimSpace(backendHelp),
@@ -51,25 +54,21 @@ func backend() *hashiCupsBackend {
 	return &b
 }
 
-// reset clears any client configuration for a new
-// backend to be configured
-func (b *hashiCupsBackend) reset() {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	b.client = nil
-}
-
 // invalidate clears an existing client configuration in
 // the backend
-func (b *hashiCupsBackend) invalidate(ctx context.Context, key string) {
+func (b *myBackend) invalidate(ctx context.Context, key string) {
 	if key == "config" {
-		b.reset()
+		// reset clears any client configuration for a new
+		// backend to be configured
+		b.lock.Lock()
+		defer b.lock.Unlock()
+		b.client = nil
 	}
 }
 
 // getClient locks the backend as it configures and creates a
 // a new client for the target API
-func (b *hashiCupsBackend) getClient(ctx context.Context, s logical.Storage) (*hashiCupsClient, error) {
+func (b *myBackend) getClient(ctx context.Context, s logical.Storage) (*hashiCupsClient, error) {
 	b.lock.RLock()
 	unlockFunc := b.lock.RUnlock
 	defer func() { unlockFunc() }()
@@ -87,7 +86,7 @@ func (b *hashiCupsBackend) getClient(ctx context.Context, s logical.Storage) (*h
 
 // backendHelp should contain help information for the backend
 const backendHelp = `
-The HashiCups secrets backend dynamically generates user tokens.
+The myBackend secrets backend dynamically generates user tokens.
 After mounting this backend, credentials to manage HashiCups user tokens
 must be configured with the "config/" endpoints.
 `
