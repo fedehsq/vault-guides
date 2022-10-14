@@ -51,9 +51,12 @@ func createMyBackend() *myBackend {
 			pathRole(b),
 			[]*framework.Path{
 				pathConfig(b),
+				pathCredentials(b),
 			},
 		),
-		Secrets:     []*framework.Secret{},
+		Secrets:     []*framework.Secret{
+			b.myToken(),
+		},
 		BackendType: logical.TypeLogical,
 		Invalidate:  b.invalidate,
 	}
